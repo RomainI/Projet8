@@ -19,7 +19,7 @@ interface CandidateDao {
     suspend fun delete(candidate: Candidate)
 
     @Query("DELETE FROM candidates")
-    suspend fun deleteAll(): Int
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM candidates WHERE id = :id")
     suspend fun getCandidateById(id: Int): Candidate?

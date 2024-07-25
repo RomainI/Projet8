@@ -30,7 +30,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "candidate_database"
+            "VitesseDB"
         )
             .fallbackToDestructiveMigration()
             .addCallback(object : RoomDatabase.Callback() {
