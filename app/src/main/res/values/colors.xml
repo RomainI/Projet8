@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="colorPrimary">#DF9780</color>
+    <color name="colorPrimaryVariant">#749FB8</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSecondary">#E8B952</color>
+    <color name="colorSecondaryVariant">#E8B952</color>
+    <color name="colorOnSecondary">#FFFFFF</color>
+    <color name="selected_tab_text">#774BC3</color> <!-- Violet -->
+    <color name="unselected_tab_text">#808080</color> <!-- Grey -->
 </resources>

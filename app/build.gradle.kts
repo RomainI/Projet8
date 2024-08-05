@@ -55,7 +55,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.activity:activity-ktx:1.8.0")
     implementation("androidx.fragment:fragment-ktx:1.6.1")
-
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     //Tests
@@ -79,6 +80,10 @@ dependencies {
     //TESTS
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    implementation ("com.google.android.material:material:1.3.0")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+
 }
 kapt {
     correctErrorTypes = true

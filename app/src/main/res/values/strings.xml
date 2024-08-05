@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Vitesse</string>
+    <string name="tab_all_candidates">All</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="text_name">Name</string>
+    <string name="text_email">Email</string>
+    <string name="text_phone">Phone</string>
+    <string name="save">Save</string>
+    <string name="add_candidate">Add candidate</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="email">Email address</string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="salary_expectations">Salary expectations</string>
+    <string name="notes">Notes</string>
+    <string name="empty_field">Cannot be empty</string>
+
+
 </resources>

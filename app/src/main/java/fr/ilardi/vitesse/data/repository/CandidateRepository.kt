@@ -2,8 +2,10 @@ package fr.ilardi.vitesse.data.repository
 
 import fr.ilardi.vitesse.database.CandidateDao
 import fr.ilardi.vitesse.model.Candidate
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class CandidateRepository(private val candidateDao: CandidateDao) {
+class CandidateRepository @Inject constructor(private val candidateDao: CandidateDao) {
 
     suspend fun insert(candidate: Candidate) {
         candidateDao.insert(candidate)
@@ -21,7 +23,7 @@ class CandidateRepository(private val candidateDao: CandidateDao) {
         return candidateDao.getCandidateById(id)
     }
 
-    suspend fun getAllCandidates(): List<Candidate> {
+    suspend fun getAllCandidates(): Flow<List<Candidate>> {
         return candidateDao.getAllCandidates()
     }
 }

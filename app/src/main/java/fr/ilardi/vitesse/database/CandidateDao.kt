@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import fr.ilardi.vitesse.model.Candidate
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CandidateDao {
@@ -25,5 +26,5 @@ interface CandidateDao {
     suspend fun getCandidateById(id: Int): Candidate?
 
     @Query("SELECT * FROM candidates")
-    suspend fun getAllCandidates(): List<Candidate>
+    fun getAllCandidates(): Flow<List<Candidate>>
 }
