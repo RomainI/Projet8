@@ -15,6 +15,11 @@
     <string name="salary_expectations">Salary expectations</string>
     <string name="notes">Notes</string>
     <string name="empty_field">Cannot be empty</string>
-
+    <string name="fieds_must_be_completed">All fields must be completed</string>
+    <string name="about">About</string>
+    <string name="salary_expectation">Salary expectation</string>
+    <string name="email_label">E-mail</string>
+    <string name="sms_label">SMS</string>
+    <string name="phone_label">Phone</string>
 
 </resources>

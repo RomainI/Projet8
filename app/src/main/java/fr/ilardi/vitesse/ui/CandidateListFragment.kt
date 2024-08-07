@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import fr.ilardi.vitesse.R
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -32,7 +31,6 @@ class CandidateListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_candidates, container, false)
     }
 
@@ -41,7 +39,10 @@ class CandidateListFragment : Fragment() {
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        candidateAdapter = CandidateAdapter()
+        candidateAdapter = CandidateAdapter { candidate ->
+            val fragment = DetailsFragment.newInstance(candidate)
+            (activity as MainActivity).replaceFragment(fragment)
+        }
         recyclerView.adapter = candidateAdapter
 
         // Observer les données

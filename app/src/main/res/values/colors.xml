@@ -11,4 +11,8 @@
     <color name="colorOnSecondary">#FFFFFF</color>
     <color name="selected_tab_text">#774BC3</color> <!-- Violet -->
     <color name="unselected_tab_text">#808080</color> <!-- Grey -->
+    <color name="textInputHintColor">#808080</color> <!-- Custom hint color -->
+    <color name="textInputTextColor">#000000</color> <!-- Custom text color -->
+    <color name="textInputBackgroundColor">#FFFFFF</color> <!-- Custom background color -->
+    <color name="textInputErrorColor">#B00020</color> <!-- Custom error color -->
 </resources>

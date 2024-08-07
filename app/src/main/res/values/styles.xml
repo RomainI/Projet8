@@ -28,11 +28,14 @@
 
     <style name="RoundedTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundMode">outline</item>
-        <item name="boxBackgroundColor">@android:color/white</item>
+        <item name="boxBackgroundColor">@color/textInputBackgroundColor</item>
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="boxCornerRadiusTopStart">16dp</item>
         <item name="boxCornerRadiusTopEnd">16dp</item>
         <item name="boxCornerRadiusBottomEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="hintTextColor">@color/textInputHintColor</item>
+        <item name="android:textColor">@color/textInputTextColor</item>
+        <item name="errorTextColor">@color/textInputErrorColor</item>
     </style>
 </resources>

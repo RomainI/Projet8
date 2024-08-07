@@ -9,14 +9,30 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.ilardi.vitesse.R
 import fr.ilardi.vitesse.model.Candidate
 
-class CandidateAdapter : RecyclerView.Adapter<CandidateAdapter.CandidateViewHolder>() {
+class CandidateAdapter(private val onItemClick: (Candidate) -> Unit) : RecyclerView.Adapter<CandidateAdapter.CandidateViewHolder>() {
 
     private var candidates: List<Candidate> = emptyList()
 
-    class CandidateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTextView: TextView = itemView.findViewById(R.id.text_name)
-        val notesTextView: TextView = itemView.findViewById(R.id.text_description)
+    inner class CandidateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        private val nameTextView: TextView = itemView.findViewById(R.id.text_name)
+        private val notesTextView: TextView = itemView.findViewById(R.id.text_description)
         val photoImageView: ImageView = itemView.findViewById(R.id.avatar)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        fun bind(candidate: Candidate) {
+            nameTextView.text = "${candidate.firstName} ${candidate.lastName}"
+            notesTextView.text = candidate.notes
+            //TODO holder.photoImageView.drawable = currentCandidate.phoneNumber.toString()
+        }
+
+        override fun onClick(v: View?) {
+            if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                onItemClick(candidates[bindingAdapterPosition])
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateViewHolder {
@@ -25,10 +41,7 @@ class CandidateAdapter : RecyclerView.Adapter<CandidateAdapter.CandidateViewHold
     }
 
     override fun onBindViewHolder(holder: CandidateViewHolder, position: Int) {
-        val currentCandidate = candidates[position]
-        holder.nameTextView.text = "${currentCandidate.firstName} ${currentCandidate.lastName}"
-        holder.notesTextView.text = currentCandidate.notes
-        //TODO holder.photoImageView.drawable = currentCandidate.phoneNumber.toString()
+        holder.bind(candidates[position])
     }
 
     override fun getItemCount() = candidates.size

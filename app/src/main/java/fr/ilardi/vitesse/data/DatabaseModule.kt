@@ -57,33 +57,33 @@ object DatabaseModule {
         val candidate1 = Candidate(
             firstName = "John",
             lastName = "Doe",
-            phoneNumber = 1234567890,
+            phoneNumber = "1234567890",
             email = "john.doe@example.com",
-            dateOfBirth = Date(),
+            dateOfBirth = "30/05/1991",
             pictureURI = "http://example.com/picture1.jpg",
-            salary = 50000L,
+            salary = "50000",
             notes = "Notes about John",
             isFavorite = true
         )
         val candidate2 = Candidate(
             firstName = "Jane",
             lastName = "Smith",
-            phoneNumber = 2345678901,
+            phoneNumber = "2345678901",
             email = "jane.smith@example.com",
-            dateOfBirth = Date(),
+            dateOfBirth = "30/05/1991",
             pictureURI = "http://example.com/picture2.jpg",
-            salary = 60000L,
+            salary = "60000",
             notes = "Notes about Jane",
             isFavorite = false
         )
         val candidate3 = Candidate(
             firstName = "Michael",
             lastName = "Brown",
-            phoneNumber = 3456789012,
+            phoneNumber = "3456789012",
             email = "michael.brown@example.com",
-            dateOfBirth = Date(),
+            dateOfBirth = "30/05/1991",
             pictureURI = "http://example.com/picture3.jpg",
-            salary = 70000L,
+            salary = "70000",
             notes = "Notes about Michael",
             isFavorite = true
         )
