@@ -30,7 +30,14 @@ class AddCandidateFragment : Fragment() {
     private var _binding: AddCandidateFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AddCandidateFragmentViewModel by viewModels()
+    private var candidate: Candidate? = null
 
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        candidate = arguments?.getParcelable(ARG_CANDIDATE)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,6 +78,17 @@ class AddCandidateFragment : Fragment() {
 
         val saveButton = binding.saveButton
         val imageCandidateImageView = binding.picture
+        candidate?.let { candidate ->
+            firstNameEditText.setText(candidate.firstName)
+            lastNameEditText.setText(candidate.lastName)
+            phoneNumberEditText.setText(candidate.phoneNumber)
+            emailAddressEditText.setText(candidate.email)
+            dateOfBirth.setText(candidate.dateOfBirth)
+            salaryEditText.setText(candidate.salary)
+            notesEditText.setText(candidate.notes)
+            // TODO imageCandidateImageView.setImageURI(Uri.parse(candidate.pictureURI))
+        }
+
         saveButton.setOnClickListener {
             if (validateFields()) {
 
@@ -154,5 +172,16 @@ class AddCandidateFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    companion object {
+        private const val ARG_CANDIDATE = "candidate"
+
+        @JvmStatic
+        fun newInstance(candidate: Candidate) =
+            DetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_CANDIDATE, candidate)
+                }
+            }
     }
 }

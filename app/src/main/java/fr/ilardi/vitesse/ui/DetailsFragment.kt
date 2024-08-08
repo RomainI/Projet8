@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.ilardi.vitesse.databinding.DetailsFragmentBinding
 import fr.ilardi.vitesse.model.Candidate
@@ -59,17 +60,35 @@ class DetailsFragment : Fragment() {
             }
         }
 
-        // Vous pouvez également ajouter des click listeners ici si nécessaire
         binding.favImage.setOnClickListener {
-            // Action on favorite icon click
+            val favCandidate = candidate?.let { can ->
+                Candidate(
+                    firstName = can.firstName,
+                    lastName = can.lastName,
+                    phoneNumber = can.phoneNumber,
+                    email = can.email,
+                    dateOfBirth = can.dateOfBirth,
+                    pictureURI = can.pictureURI,
+                    salary = can.salary,
+                    notes = can.notes,
+                    isFavorite = true
+                )
+            }
+            if (favCandidate != null) {
+                viewModel.updateCandidate(favCandidate)
+            }
         }
 
         binding.deleteImage.setOnClickListener {
-            // Action on delete icon click
+            candidate?.let { it1 -> viewModel.deleteCandidate(it1) }
         }
 
         binding.editImage.setOnClickListener {
-            // Action on edit icon click
+            candidate?.let { it1 ->
+                val fragment = AddCandidateFragment.newInstance(it1)
+                (activity as MainActivity).replaceFragment(fragment)
+            }
+
         }
     }
 
