@@ -1,6 +1,8 @@
 package fr.ilardi.vitesse.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +17,12 @@ import fr.ilardi.vitesse.databinding.MainFragmentBinding
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
+    private val viewModel : CandidateListViewModel by viewModels()
+
     private var _binding: MainFragmentBinding? = null
+
+    private var searchContent: String? = null
     private val binding get() = _binding!!
-    private val viewModel: CandidateViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,9 +39,9 @@ class MainFragment : Fragment() {
         }
 
 
-        val fragments = listOf(
-            CandidateListFragment.newInstance(false),  // All candidates, tagged false in the database (isFavorite)
-            CandidateListFragment.newInstance(true)    // Favorites candidates, tagged true in the database
+        var fragments = listOf(
+            CandidateListFragment.newInstance(false, searchContent),  // All candidates, tagged false in the database (isFavorite)
+            CandidateListFragment.newInstance(true, searchContent)    // Favorites candidates, tagged true in the database
         )
 
         //Creates Tabs to sort favorite candidates
@@ -44,7 +49,7 @@ class MainFragment : Fragment() {
 
         //Allow the possibility to swipe between the two lists of candidates
         val viewPager = binding.viewPager
-        val adapter = ViewPagerAdapter(requireActivity(), fragments)
+        var adapter = ViewPagerAdapter(requireActivity(), fragments)
         viewPager.adapter = adapter
 
         //Sync the viewPager and tabLayout to sort favorite candidates
@@ -55,5 +60,42 @@ class MainFragment : Fragment() {
                 else -> null
             }
         }.attach()
+
+        //Using the search bar
+        //If used, update CandidateListFragment with a new list of Candidate
+        //If not, the recyclerview will be filled with all Candidates
+        val searchBar = binding.searchInput
+        searchBar.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Nothing to change before text changed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                searchContent = if (query.length >= 3) query else ""
+
+                // Rafraîchir les fragments en fonction de la recherche
+                fragments = listOf(
+                    CandidateListFragment.newInstance(false, searchContent),  // Tous les candidats
+                    CandidateListFragment.newInstance(true, searchContent)    // Candidats favoris
+                )
+
+                // Crée un nouvel adaptateur avec les fragments actualisés
+                adapter = ViewPagerAdapter(requireActivity(), fragments)
+                viewPager.adapter = adapter
+
+                // Synchronisation avec les tabs
+                TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                    tab.text = when (position) {
+                        0 -> getString(R.string.tab_all_candidates)
+                        1 -> getString(R.string.tab_favorites)
+                        else -> null
+                    }
+                }.attach()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
     }
 }

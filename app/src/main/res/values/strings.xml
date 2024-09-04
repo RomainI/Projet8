@@ -21,5 +21,15 @@
     <string name="email_label">E-mail</string>
     <string name="sms_label">SMS</string>
     <string name="phone_label">Phone</string>
+    <string name="search">Find a candidate</string>
+    <string name="email_invalid">Invalid format</string>
+    <string name="birthday">Birthday</string>
+    <string name="years_old">years old</string>
+    <string name="delete">Delete</string>
+    <string name="delete_message">Are you sure you want to delete this candidate? This is an irrevocable action. </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+
 
 </resources>

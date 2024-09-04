@@ -23,6 +23,12 @@
     <string name="email_label">E-mail</string>
     <string name="sms_label">SMS</string>
     <string name="phone_label">Appel</string>
-
-
+    <string name="search">Rechercher un candidat</string>
+    <string name="email_invalid">Format invalide</string>
+    <string name="birthday">Anniversaire</string>
+    <string name="years_old">ans</string>
+    <string name="delete">Suppression</string>
+    <string name="delete_message">Êtes vous sûr de vouloir supprimer ce candidat? C\'est une action irrévocable </string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
 </resources>

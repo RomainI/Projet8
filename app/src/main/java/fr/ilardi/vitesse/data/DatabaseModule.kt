@@ -60,7 +60,7 @@ object DatabaseModule {
             phoneNumber = "1234567890",
             email = "john.doe@example.com",
             dateOfBirth = "30/05/1991",
-            pictureURI = "http://example.com/picture1.jpg",
+            pictureURI = "",
             salary = "50000",
             notes = "Notes about John",
             isFavorite = true
@@ -71,7 +71,7 @@ object DatabaseModule {
             phoneNumber = "2345678901",
             email = "jane.smith@example.com",
             dateOfBirth = "30/05/1991",
-            pictureURI = "http://example.com/picture2.jpg",
+            pictureURI = "",
             salary = "60000",
             notes = "Notes about Jane",
             isFavorite = false
@@ -82,7 +82,7 @@ object DatabaseModule {
             phoneNumber = "3456789012",
             email = "michael.brown@example.com",
             dateOfBirth = "30/05/1991",
-            pictureURI = "http://example.com/picture3.jpg",
+            pictureURI = "",
             salary = "70000",
             notes = "Notes about Michael",
             isFavorite = true

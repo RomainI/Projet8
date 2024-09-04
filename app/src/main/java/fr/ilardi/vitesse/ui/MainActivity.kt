@@ -31,21 +31,7 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
-}
-
-object DatabaseBuilder {
-    private var instance: AppDatabase? = null
-
-    fun getInstance(context: Context): AppDatabase {
-        if (instance == null) {
-            synchronized(AppDatabase::class) {
-                instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "candidate_database"
-                ).build()
-            }
-        }
-        return instance!!
+    fun back() {
+        onBackPressedDispatcher.onBackPressed()
     }
 }

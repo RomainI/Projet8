@@ -83,7 +83,18 @@ dependencies {
 
     implementation ("com.google.android.material:material:1.12.0")
     implementation ("androidx.viewpager2:viewpager2:1.1.0")
-
+    implementation ("com.github.bumptech.glide:glide:4.15.0")
+    implementation ("androidx.core:core-ktx:1.9.0")
+    implementation("org.json:json:20240303")
+    // Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    // Moshi for JSON parsing
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+    // OkHttp for HTTP client (included as Retrofit uses it internally)
+    implementation ("com.squareup.okhttp3:okhttp:4.11.0")
+    // Moshi
+    implementation ("com.squareup.moshi:moshi:1.15.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.15.0")
 }
 kapt {
     correctErrorTypes = true

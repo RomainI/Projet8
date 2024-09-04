@@ -15,4 +15,6 @@
     <color name="textInputTextColor">#000000</color> <!-- Custom text color -->
     <color name="textInputBackgroundColor">#FFFFFF</color> <!-- Custom background color -->
     <color name="textInputErrorColor">#B00020</color> <!-- Custom error color -->
+    <color name="disabled_button_gray">#D3D3D3</color>
+
 </resources>

@@ -1,5 +1,6 @@
 package fr.ilardi.vitesse.ui
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ class CandidateAdapter(private val onItemClick: (Candidate) -> Unit) : RecyclerV
     inner class CandidateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         private val nameTextView: TextView = itemView.findViewById(R.id.text_name)
         private val notesTextView: TextView = itemView.findViewById(R.id.text_description)
-        val photoImageView: ImageView = itemView.findViewById(R.id.avatar)
+        private val photoImageView: ImageView = itemView.findViewById(R.id.avatar)
 
         init {
             itemView.setOnClickListener(this)
@@ -25,7 +26,9 @@ class CandidateAdapter(private val onItemClick: (Candidate) -> Unit) : RecyclerV
         fun bind(candidate: Candidate) {
             nameTextView.text = "${candidate.firstName} ${candidate.lastName}"
             notesTextView.text = candidate.notes
-            //TODO holder.photoImageView.drawable = currentCandidate.phoneNumber.toString()
+            if (candidate.pictureURI != "") {
+                photoImageView.setImageURI(Uri.parse(candidate.pictureURI))
+            }
         }
 
         override fun onClick(v: View?) {

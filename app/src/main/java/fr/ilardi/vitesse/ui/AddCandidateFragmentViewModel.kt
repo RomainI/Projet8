@@ -18,4 +18,10 @@ class AddCandidateFragmentViewModel @Inject constructor(
             repository.insert(candidate)
         }
     }
+
+    fun updateCandidate(candidate: Candidate){
+        viewModelScope.launch {
+            repository.update(candidate)
+        }
+    }
 }

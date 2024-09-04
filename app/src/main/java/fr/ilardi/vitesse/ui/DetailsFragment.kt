@@ -1,20 +1,31 @@
 package fr.ilardi.vitesse.ui
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.AndroidEntryPoint
+import fr.ilardi.vitesse.R
 import fr.ilardi.vitesse.databinding.DetailsFragmentBinding
 import fr.ilardi.vitesse.model.Candidate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
@@ -43,10 +54,22 @@ class DetailsFragment : Fragment() {
 
         candidate?.let { candidate ->
             binding.toolbarTitle.text = "${candidate.firstName} ${candidate.lastName}"
-            binding.birthdayTextView.text = candidate.dateOfBirth
-            binding.salaryTextView.text = candidate.salary
+            binding.birthdayTextView.text = formatDate(candidate.dateOfBirth)
+            CoroutineScope(Dispatchers.Main).launch {
+                binding.salaryTextView.text =
+                    candidate.salary + "€\n" + "£ " + String.format(
+                        "%.2f",
+                        viewModel.getGbpFromEur(candidate.salary.toDouble())
+                    )
+            }
             binding.notesTextView.text = candidate.notes
-
+            if (candidate.isFavorite) {
+                Log.d("FAV", "is favorite")
+                binding.favImage.setImageResource(R.drawable.ic_star_filled)
+            }
+            if (candidate.pictureURI != "") {
+                binding.photoDetail.setImageURI(Uri.parse(candidate.pictureURI))
+            }
             binding.smsIcon.setOnClickListener {
                 sendSMS(candidate.phoneNumber, "Hello ${candidate.firstName}")
             }
@@ -61,34 +84,62 @@ class DetailsFragment : Fragment() {
         }
 
         binding.favImage.setOnClickListener {
-            val favCandidate = candidate?.let { can ->
-                Candidate(
-                    firstName = can.firstName,
-                    lastName = can.lastName,
-                    phoneNumber = can.phoneNumber,
-                    email = can.email,
-                    dateOfBirth = can.dateOfBirth,
-                    pictureURI = can.pictureURI,
-                    salary = can.salary,
-                    notes = can.notes,
-                    isFavorite = true
+            candidate?.let {
+                val updatedCandidate = it.copy(
+                    isFavorite = !it.isFavorite
                 )
-            }
-            if (favCandidate != null) {
-                viewModel.updateCandidate(favCandidate)
+                updateFavStar(updatedCandidate.isFavorite)
+                viewModel.updateCandidate(updatedCandidate)
+                candidate = updatedCandidate
             }
         }
 
         binding.deleteImage.setOnClickListener {
-            candidate?.let { it1 -> viewModel.deleteCandidate(it1) }
+            val builder = AlertDialog.Builder(this.context)
+            builder.setTitle(getString(R.string.delete))
+            builder.setMessage(getString(R.string.delete_message))
+
+            builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                candidate?.let { it ->
+                    viewModel.deleteCandidate(it)
+                }
+                (activity as? MainActivity)?.replaceFragment(MainFragment())
+            }
+
+            // Ajouter un bouton "Annuler" avec une action (optionnel)
+            builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                dialog.dismiss() // Close the popup
+            }
+
+            // Créer et afficher l'AlertDialog
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+
         }
 
         binding.editImage.setOnClickListener {
-            candidate?.let { it1 ->
-                val fragment = AddCandidateFragment.newInstance(it1)
+            Log.d("editImage.setOnClickListener", "editImage.setOnClickListener")
+            candidate?.let { it ->
+                Log.d(
+                    "DetailsFragment",
+                    "Navigating to AddCandidateFragment with candidate: ${it.firstName} ${it.lastName}"
+                )
+                val fragment = AddCandidateFragment.newInstance(it)
                 (activity as MainActivity).replaceFragment(fragment)
             }
 
+        }
+
+        binding.arrowIcon.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(MainFragment())
+        }
+    }
+
+    private fun updateFavStar(isFilled: Boolean) {
+        if (isFilled) {
+            binding.favImage.setImageResource(R.drawable.ic_star_filled)
+        } else {
+            binding.favImage.setImageResource(R.drawable.ic_star)
         }
     }
 
@@ -146,6 +197,53 @@ class DetailsFragment : Fragment() {
             startActivity(callIntent)
 
         }
+    }
+
+    private fun formatDate(date: String): String {
+        // Transformation en objet Date
+        val birthdayDate = stringToDate(date)
+
+        // Récupération de la locale actuelle du téléphone
+        val currentLocale = Locale.getDefault()
+
+        // Formater la date en fonction de la locale
+        val formattedBirthday = formatDateForLocale(birthdayDate, currentLocale)
+
+        // Calcul de l'âge
+        val age = calculateAge(birthdayDate)
+
+        return "$formattedBirthday ($age " + getString(R.string.years_old) + ")\n" + getString(R.string.birthday)
+    }
+
+    private fun calculateAge(birthDate: Date?): Int {
+        if (birthDate == null) return 0
+
+        val birthCalendar = Calendar.getInstance().apply {
+            time = birthDate
+        }
+        val today = Calendar.getInstance()
+
+        var age = today.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
+
+        if (today.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
+            age--
+        }
+
+        return age
+    }
+
+    private fun stringToDate(dateString: String): Date? {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE) // Format initial
+        return sdf.parse(dateString)
+    }
+
+    private fun formatDateForLocale(date: Date?, locale: Locale): String {
+        val dateFormat = if (locale.language == Locale.FRENCH.language) {
+            SimpleDateFormat("dd/MM/yyyy", locale)
+        } else {
+            SimpleDateFormat("MM/dd/yyyy", locale)
+        }
+        return date?.let { dateFormat.format(it) } ?: ""
     }
 
     companion object {
