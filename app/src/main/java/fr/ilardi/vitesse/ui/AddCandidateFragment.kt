@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -51,26 +52,17 @@ class AddCandidateFragment : Fragment() {
             ) {
                 openGallery()
             } else {
-                // TODO popup or snackbar
+                view?.let {
+                    Snackbar.make(it, getString(R.string.settings), Snackbar.LENGTH_LONG).show()
+                }
             }
         }
 
-    // Lancer la sélection de fichier avec ACTION_OPEN_DOCUMENT
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/*"
-        }
-        selectImageLauncher.launch(intent)
-    }
-
-    // Utiliser ActivityResultContracts.StartActivityForResult pour gérer l'intent
     private val selectImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     try {
-                        // Prendre une permission persistante
                         requireContext().contentResolver.takePersistableUriPermission(
                             uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
@@ -78,17 +70,27 @@ class AddCandidateFragment : Fragment() {
                         imageCandidateImageView.setImageURI(uri)
                     } catch (e: SecurityException) {
                         e.printStackTrace()
-                        // Gérer l'exception
-                        Snackbar.make(binding.root, "Failed to persist URI permissions", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            binding.root,
+                            "Failed to persist URI permissions",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
         }
 
+    //getParcelable deprecated, but fixed can only be used afetr TIRAMISU version
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        candidate = arguments?.getParcelable(ARG_CANDIDATE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            candidate = arguments?.getParcelable(ARG_CANDIDATE, Candidate::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable(ARG_CANDIDATE)
+        }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -132,7 +134,14 @@ class AddCandidateFragment : Fragment() {
         val saveButton = binding.saveButton
 
         saveButton.isEnabled = false
-        saveButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.disabled_button_gray))
+        saveButton.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.disabled_button_gray
+            )
+        )
+
+        //checking if the SDK is >= 33 to adapt the permission function
 
         imageCandidateImageView.setOnClickListener {
             when {
@@ -188,8 +197,6 @@ class AddCandidateFragment : Fragment() {
                 if (candidate.pictureURI != "") {
                     imageCandidateImageView.setImageURI(Uri.parse(candidate.pictureURI))
                 }
-
-
             }
         }
 
@@ -249,29 +256,54 @@ class AddCandidateFragment : Fragment() {
 
     }
 
-    private fun addTextWatcher(layout: TextInputLayout, editText: TextInputEditText, isEmail: Boolean) {
+    // open the photo gallery
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "image/*"
+        }
+        selectImageLauncher.launch(intent)
+    }
+
+    private fun addTextWatcher(
+        layout: TextInputLayout,
+        editText: TextInputEditText,
+        isEmail: Boolean
+    ) {
         editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 validateInput(layout, editText, isEmail)
-                checkAllFields() // Vérifiez tous les champs après chaque changement
+                checkAllFields()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
+    //function used to enable or disable the save button and change its color
     private fun checkAllFields() {
-        val isAllFieldsValid = validateFields() // Vérifiez si tous les champs sont remplis et valides
+        val isAllFieldsValid =
+            validateFields()
         binding.saveButton.isEnabled = isAllFieldsValid
-        if(isAllFieldsValid){
-            binding.saveButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
+        if (isAllFieldsValid) {
+            binding.saveButton.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPrimary
+                )
+            )
         }
     }
-    private fun validateInput(layout: TextInputLayout, editText: TextInputEditText, isEmail : Boolean) {
+
+    //function used to display a message in the Textinput fields
+    private fun validateInput(
+        layout: TextInputLayout,
+        editText: TextInputEditText,
+        isEmail: Boolean
+    ) {
         val text = editText.text.toString()
-        if(isEmail && !isEmailValid(editText.text.toString())){
+        if (isEmail && !isEmailValid(editText.text.toString())) {
             layout.error = getString(R.string.email_invalid)
         } else if (text.isEmpty()) {
             layout.error = getString(R.string.empty_field)
@@ -280,11 +312,13 @@ class AddCandidateFragment : Fragment() {
         }
     }
 
+    //function used to validate the completion of all fields
     private fun validateFields(): Boolean {
         val firstNameValid = binding.firstName.text?.isNotEmpty() == true
         val lastNameValid = binding.lastName.text?.isNotEmpty() == true
         val phoneNumberValid = binding.phoneNumber.text?.isNotEmpty() == true
-        val emailValid = binding.email.text?.isNotEmpty() == true && isEmailValid(binding.email.text.toString())
+        val emailValid =
+            binding.email.text?.isNotEmpty() == true && isEmailValid(binding.email.text.toString())
         val dateOfBirthValid = binding.dateOfBirth.text?.isNotEmpty() == true
         val salaryValid = binding.salaryExpectations.text?.isNotEmpty() == true
         val notesValid = binding.notes.text?.isNotEmpty() == true
@@ -292,6 +326,7 @@ class AddCandidateFragment : Fragment() {
         return firstNameValid && lastNameValid && phoneNumberValid && emailValid && dateOfBirthValid && salaryValid && notesValid
     }
 
+    //used to select a date
     private fun showDatePickerDialog(editText: TextInputEditText) {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -307,9 +342,10 @@ class AddCandidateFragment : Fragment() {
         datePickerDialog.show()
     }
 
-    fun isEmailValid(email: String): Boolean {
+    private fun isEmailValid(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

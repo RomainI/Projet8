@@ -36,9 +36,12 @@ object DatabaseModule {
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
+
+                    //populateDatabase is only used to test with pre populate DB
+                    /**
                     CoroutineScope(Dispatchers.IO).launch {
                         populateDatabase(provideDatabase(appContext).candidateDao())
-                    }
+                    }*/
                 }
             })
             .build()

@@ -36,12 +36,9 @@ class DetailsFragmentViewModel  @Inject constructor(
 
     suspend fun getGbpFromEur(euro : Double): Double? {
         return try {
-            // Effectuer l'appel réseau dans un thread d'arrière-plan
             val response = withContext(Dispatchers.IO) {
                 RetrofitInstance.api.getEuroRates()
             }
-
-            // Récupérer le taux GBP
             response.eur.gbp * euro
         } catch (e: Exception) {
             e.printStackTrace()

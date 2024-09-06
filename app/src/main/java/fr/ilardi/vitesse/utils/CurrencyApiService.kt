@@ -8,23 +8,20 @@ import retrofit2.http.GET
 
 interface CurrencyApiService {
 
-    // Déclaration de l'appel GET pour récupérer les devises
     @GET("v1/currencies/eur.json")
     suspend fun getEuroRates(): CurrencyResponse
 }
 
-// Fonction pour créer l'instance Retrofit
 object RetrofitInstance {
 
-    // Créez une instance de Moshi avec KotlinJsonAdapterFactory
     private val moshi = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory()) // Ajoutez cette ligne
+        .add(KotlinJsonAdapterFactory())
         .build()
 
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) // Utilisez l'instance Moshi personnalisée
+            .addConverterFactory(MoshiConverterFactory.create(moshi)) 
             .build()
     }
 

@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +25,7 @@ class CandidateListFragment : Fragment() {
     private lateinit var candidateAdapter: CandidateAdapter
     private var showFavorites: Boolean = false
     private var showSearchContent: String? = null
+    private lateinit var textViewNoCandidate: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -43,7 +45,7 @@ class CandidateListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-
+        textViewNoCandidate = view.findViewById(R.id.no_candidate_text_view)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         candidateAdapter = CandidateAdapter { candidate ->
             val fragment = DetailsFragment.newInstance(candidate)
@@ -54,25 +56,11 @@ class CandidateListFragment : Fragment() {
         updateRecyclerView()
     }
 
-    private fun searchCandidates(query: String) {
-        // Utilisez le viewLifecycleOwner pour lancer une coroutine dans la portée du Fragment
-        viewLifecycleOwner.lifecycleScope.launch {
-            // Collecter les résultats du Flow et les transmettre à l'adapter du RecyclerView
-            candidateListViewModel.searchCandidatesByName(query).collectLatest { candidateList ->
-                candidateAdapter.setCandidates(candidateList)
-            }
-        }
-    }
-
-    private fun resetList() {
-        candidateAdapter.setCandidates(emptyList()) // Par exemple, vider la liste
-    }
 
     private fun updateRecyclerView() {
         viewLifecycleOwner.lifecycleScope.launch {
-
+            textViewNoCandidate
             if (showSearchContent == null) {
-
                 candidateListViewModel.getAllCandidates().collect { candidates ->
                     val filteredCandidates = if (showFavorites) {
                         candidates.filter { it.isFavorite }
@@ -80,16 +68,29 @@ class CandidateListFragment : Fragment() {
                         candidates
                     }
                     candidateAdapter.setCandidates(filteredCandidates)
+                    if (filteredCandidates.isEmpty()) {
+                        textViewNoCandidate.visibility = View.VISIBLE
+                        textViewNoCandidate.text = getString(R.string.no_candidate)
+                    } else {
+                        textViewNoCandidate.visibility = View.INVISIBLE
+                    }
                 }
             } else {
-                candidateListViewModel.searchCandidatesByName(showSearchContent!!).collect { candidates ->
-                    val filteredCandidates = if (showFavorites) {
-                        candidates.filter { it.isFavorite }
-                    } else {
-                        candidates
+                candidateListViewModel.searchCandidatesByName(showSearchContent!!)
+                    .collect { candidates ->
+                        val filteredCandidates = if (showFavorites) {
+                            candidates.filter { it.isFavorite }
+                        } else {
+                            candidates
+                        }
+                        candidateAdapter.setCandidates(filteredCandidates)
+                        if (filteredCandidates.isEmpty()) {
+                            textViewNoCandidate.visibility = View.VISIBLE
+                            textViewNoCandidate.text = getString(R.string.no_candidate)
+                        } else {
+                            textViewNoCandidate.visibility = View.INVISIBLE
+                        }
                     }
-                    candidateAdapter.setCandidates(filteredCandidates)
-                }
             }
         }
     }

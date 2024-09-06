@@ -17,7 +17,7 @@ import fr.ilardi.vitesse.databinding.MainFragmentBinding
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
-    private val viewModel : CandidateListViewModel by viewModels()
+    private val viewModel: CandidateListViewModel by viewModels()
 
     private var _binding: MainFragmentBinding? = null
 
@@ -40,8 +40,14 @@ class MainFragment : Fragment() {
 
 
         var fragments = listOf(
-            CandidateListFragment.newInstance(false, searchContent),  // All candidates, tagged false in the database (isFavorite)
-            CandidateListFragment.newInstance(true, searchContent)    // Favorites candidates, tagged true in the database
+            CandidateListFragment.newInstance(
+                false,
+                searchContent
+            ),  // All candidates, tagged false in the database (isFavorite)
+            CandidateListFragment.newInstance(
+                true,
+                searchContent
+            )    // Favorites candidates, tagged true in the database
         )
 
         //Creates Tabs to sort favorite candidates
@@ -69,22 +75,18 @@ class MainFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Nothing to change before text changed
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString()
-                searchContent = if (query.length >= 3) query else ""
+                searchContent = query
 
-                // Rafraîchir les fragments en fonction de la recherche
                 fragments = listOf(
-                    CandidateListFragment.newInstance(false, searchContent),  // Tous les candidats
-                    CandidateListFragment.newInstance(true, searchContent)    // Candidats favoris
+                    CandidateListFragment.newInstance(false, searchContent),
+                    CandidateListFragment.newInstance(true, searchContent)
                 )
-
-                // Crée un nouvel adaptateur avec les fragments actualisés
                 adapter = ViewPagerAdapter(requireActivity(), fragments)
                 viewPager.adapter = adapter
 
-                // Synchronisation avec les tabs
+                //Sync the viewPager and tabLayout to sort favorite candidates
                 TabLayoutMediator(tabLayout, viewPager) { tab, position ->
                     tab.text = when (position) {
                         0 -> getString(R.string.tab_all_candidates)

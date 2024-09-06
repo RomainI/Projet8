@@ -1,6 +1,7 @@
 package fr.ilardi.vitesse.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
@@ -48,10 +50,11 @@ class DetailsFragment : Fragment() {
         _binding = DetailsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        //display the candidate information
         candidate?.let { candidate ->
             binding.toolbarTitle.text = "${candidate.firstName} ${candidate.lastName}"
             binding.birthdayTextView.text = formatDate(candidate.dateOfBirth)
@@ -94,11 +97,13 @@ class DetailsFragment : Fragment() {
             }
         }
 
+        //when the user click on the bin picture
         binding.deleteImage.setOnClickListener {
-            val builder = AlertDialog.Builder(this.context)
+            val builder = AlertDialog.Builder(this.context, R.style.CustomAlertDialogTheme)
             builder.setTitle(getString(R.string.delete))
             builder.setMessage(getString(R.string.delete_message))
 
+            //display a popup to confirm the deletion of the candidate
             builder.setPositiveButton(getString(R.string.yes)) { dialog, _ ->
                 candidate?.let { it ->
                     viewModel.deleteCandidate(it)
@@ -106,24 +111,21 @@ class DetailsFragment : Fragment() {
                 (activity as? MainActivity)?.replaceFragment(MainFragment())
             }
 
-            // Ajouter un bouton "Annuler" avec une action (optionnel)
             builder.setNegativeButton(getString(R.string.no)) { dialog, _ ->
                 dialog.dismiss() // Close the popup
             }
 
-            // Créer et afficher l'AlertDialog
             val dialog: AlertDialog = builder.create()
             dialog.show()
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(this.requireContext(), R.color.black))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                .setTextColor(ContextCompat.getColor(this.requireContext(), R.color.black))
 
         }
 
         binding.editImage.setOnClickListener {
-            Log.d("editImage.setOnClickListener", "editImage.setOnClickListener")
             candidate?.let { it ->
-                Log.d(
-                    "DetailsFragment",
-                    "Navigating to AddCandidateFragment with candidate: ${it.firstName} ${it.lastName}"
-                )
                 val fragment = AddCandidateFragment.newInstance(it)
                 (activity as MainActivity).replaceFragment(fragment)
             }
@@ -135,6 +137,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    //fill or unfill the star icon depending on the candidate boolean isFavorite
     private fun updateFavStar(isFilled: Boolean) {
         if (isFilled) {
             binding.favImage.setImageResource(R.drawable.ic_star_filled)
@@ -199,19 +202,12 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    //function used to convert a date formated dd/MM/YYYY to an adapted sentence based on phone language
     private fun formatDate(date: String): String {
-        // Transformation en objet Date
         val birthdayDate = stringToDate(date)
-
-        // Récupération de la locale actuelle du téléphone
         val currentLocale = Locale.getDefault()
-
-        // Formater la date en fonction de la locale
         val formattedBirthday = formatDateForLocale(birthdayDate, currentLocale)
-
-        // Calcul de l'âge
         val age = calculateAge(birthdayDate)
-
         return "$formattedBirthday ($age " + getString(R.string.years_old) + ")\n" + getString(R.string.birthday)
     }
 
@@ -233,7 +229,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun stringToDate(dateString: String): Date? {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE) // Format initial
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE)
         return sdf.parse(dateString)
     }
 

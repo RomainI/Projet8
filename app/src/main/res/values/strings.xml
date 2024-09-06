@@ -29,6 +29,10 @@
     <string name="delete_message">Are you sure you want to delete this candidate? This is an irrevocable action. </string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="no_candidate">No candidate</string>
+    <string name="pick_a_date">Pick a date</string>
+    <string name="enter_a_date">Enter a date</string>
+    <string name="settings">Pictures access must be allowed to add a photo on a candidate profile</string>
 
 
 

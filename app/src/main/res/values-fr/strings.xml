@@ -31,4 +31,8 @@
     <string name="delete_message">Êtes vous sûr de vouloir supprimer ce candidat? C\'est une action irrévocable </string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
+    <string name="no_candidate">Aucun candidat</string>
+    <string name="pick_a_date">Selectionnez une date</string>
+    <string name="enter_a_date">Entrer une date</string>
+    <string name="settings">L\'accès aux photos est indispensable pour ajouter des photos aux candidats</string>
 </resources>

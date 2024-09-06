@@ -25,18 +25,12 @@ class CandidateListViewModel @Inject constructor(
         return searchCandidates(getAllCandidates(), name)
     }
 
-    fun insertCandidate(candidate: Candidate) {
-        viewModelScope.launch {
-            repository.insert(candidate)
-        }
-    }
 
     private fun searchCandidates(
         candidatesFlow: Flow<List<Candidate>>,
         query: String
     ): Flow<List<Candidate>> {
         val searchQuery = query.trim().lowercase()
-
         return candidatesFlow.map { candidatesList ->
             candidatesList.filter { candidate ->
                 candidate.firstName.lowercase().contains(searchQuery) ||
@@ -45,19 +39,4 @@ class CandidateListViewModel @Inject constructor(
         }
     }
 
-    fun updateCandidate(candidate: Candidate) {
-        viewModelScope.launch {
-            repository.update(candidate)
-        }
-    }
-
-    fun deleteCandidate(candidate: Candidate) {
-        viewModelScope.launch {
-            repository.delete(candidate)
-        }
-    }
-
-    suspend fun getCandidateById(id: Int): Candidate? {
-        return repository.getCandidateById(id)
-    }
 }

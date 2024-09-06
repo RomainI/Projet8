@@ -42,6 +42,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -51,8 +52,8 @@
                 android:id="@+id/picture"
                 android:layout_width="wrap_content"
                 android:layout_height="200dp"
-                android:paddingRight="10dp"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_default_photo"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -179,30 +180,94 @@
                 android:layout_height="24dp"
                 android:layout_marginStart="16dp"
                 android:src="@drawable/ic_birth"
-                app:layout_constraintBottom_toBottomOf="@id/date_of_birth_layout"
+                app:layout_constraintEnd_toStartOf="@id/date_of_birth_card_view"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/date_of_birth_layout" />
+                app:layout_constraintTop_toTopOf="@id/date_of_birth_card_view" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/date_of_birth_layout"
-                style="@style/RoundedTextInputLayout"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/date_of_birth_card_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:hint="@string/date_of_birth"
+                app:cardCornerRadius="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/icon_date_of_birth"
                 app:layout_constraintTop_toBottomOf="@id/email_layout">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/date_of_birth"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/date_of_birth_constraint"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="match_parent"
+                    android:background="#EDE6F1">
+
+                    <TextView
+
+                        android:id="@+id/date_of_birth_title_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="@string/pick_a_date"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/date_of_birth_label_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="@string/enter_a_date"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@id/bar"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/date_of_birth_title_textview" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="16dp"
+                        android:src="@drawable/ic_calendar"
+                        app:layout_constraintBottom_toBottomOf="@id/date_of_birth_label_textview"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/date_of_birth_label_textview" />
+
+                    <View
+                        android:id="@+id/bar"
+                        android:layout_width="0dp"
+                        android:layout_height="0.75dp"
+                        android:layout_marginTop="5dp"
+                        android:background="#DADADA"
+                        app:layout_constraintBottom_toTopOf="@id/date_of_birth_layout"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/date_of_birth_label_textview" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/date_of_birth_layout"
+                        style="@style/RoundedTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/date_of_birth"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/bar">
+                        <!--
+                        -->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/date_of_birth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:focusable="false"
+                            android:inputType="none" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
             <ImageView
                 android:id="@+id/icon_salary_expectations"
@@ -225,7 +290,7 @@
                 android:hint="@string/salary_expectations"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/icon_salary_expectations"
-                app:layout_constraintTop_toBottomOf="@id/date_of_birth_layout">
+                app:layout_constraintTop_toBottomOf="@id/date_of_birth_card_view">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/salary_expectations"
@@ -269,9 +334,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                app:layout_constraintTop_toBottomOf="@id/notes_layout"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/notes_layout" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
@@ -282,9 +347,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="#6D5DA6"
+        android:elevation="4dp"
         android:text="@string/save"
-        android:textColor="@android:color/white"
-        android:elevation="4dp" />
+        android:textColor="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

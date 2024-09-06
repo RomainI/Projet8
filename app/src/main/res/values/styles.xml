@@ -38,4 +38,9 @@
         <item name="android:textColor">@color/textInputTextColor</item>
         <item name="errorTextColor">@color/textInputErrorColor</item>
     </style>
+
+    <style name="CustomAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>
