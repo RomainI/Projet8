@@ -59,6 +59,7 @@ class CandidateListFragment : Fragment() {
 
     private fun updateRecyclerView() {
         viewLifecycleOwner.lifecycleScope.launch {
+            textViewNoCandidate
             if (showSearchContent == null) {
                 candidateListViewModel.getAllCandidates().collect { candidates ->
                     val filteredCandidates = if (showFavorites) {
