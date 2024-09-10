@@ -103,46 +103,94 @@ class AddCandidateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         imageCandidateImageView = binding.picture
-        val firstNameEditText = binding.firstName
-        val firstNameLayout = binding.firstNameLayout
-        addTextWatcher(firstNameLayout, firstNameEditText, false)
-
-        val lastNameEditText = binding.lastName
-        val lastNameLayout = binding.lastNameLayout
-        addTextWatcher(lastNameLayout, lastNameEditText, false)
-
-        val phoneNumberEditText = binding.phoneNumber
-        val phoneNumberLayout = binding.phoneNumberLayout
-        addTextWatcher(phoneNumberLayout, phoneNumberEditText, false)
-
-        val emailAddressEditText = binding.email
-        val emailAddressLayout = binding.emailLayout
-        addTextWatcher(emailAddressLayout, emailAddressEditText, true)
-
-        val dateOfBirth = binding.dateOfBirth
-        val dateOfBirthLayout = binding.dateOfBirthLayout
-        addTextWatcher(dateOfBirthLayout, dateOfBirth, false)
-
-        val salaryEditText = binding.salaryExpectations
-        val salaryLayout = binding.salaryExpectationsLayout
-        addTextWatcher(salaryLayout, salaryEditText, false)
-
-        val notesEditText = binding.notes
-        val notesLayout = binding.notesLayout
-        addTextWatcher(notesLayout, notesEditText, false)
-
-        val saveButton = binding.saveButton
-
-        saveButton.isEnabled = false
-        saveButton.setBackgroundColor(
+        initTextWatchers()
+        initImageClickHandler()
+        binding.saveButton.isEnabled = false
+        binding.saveButton.setBackgroundColor(
             ContextCompat.getColor(
                 requireContext(),
                 R.color.disabled_button_gray
             )
         )
+        if (candidate != null) {
+            fillFieldsWhenEdit()
+        }
+        setupSaveButton()
+        binding.dateOfBirth.setOnClickListener {
+            showDatePickerDialog(binding.dateOfBirth)
+        }
+        binding.arrowIcon.setOnClickListener {
+            (activity as? MainActivity)?.replaceFragment(MainFragment())
+        }
 
-        //checking if the SDK is >= 33 to adapt the permission function
+    }
 
+    private fun setupSaveButton() {
+        binding.saveButton.setOnClickListener {
+            var stringImageUri: String
+            if (imageUri == null) {
+                stringImageUri = ""
+            } else {
+                stringImageUri = imageUri.toString()
+            }
+            if (candidate != null && validateFields()) {
+                val updatedCandidate = candidate?.copy(
+                    firstName = binding.firstName.text.toString(),
+                    lastName = binding.lastName.text.toString(),
+                    phoneNumber = binding.phoneNumber.text.toString(),
+                    email = binding.email.text.toString(),
+                    dateOfBirth = binding.dateOfBirth.text.toString(),
+                    salary = binding.salaryExpectations.text.toString(),
+                    notes = binding.notes.text.toString(),
+                    pictureURI = stringImageUri
+                )
+                updatedCandidate?.let {
+                    viewModel.updateCandidate(it)
+                }
+            } else {
+                if (validateFields()) {
+                    viewModel.insertCandidate(
+                        candidate = Candidate(
+                            firstName = binding.firstName.text.toString(),
+                            lastName = binding.lastName.text.toString(),
+                            phoneNumber = binding.phoneNumber.text.toString(),
+                            email = binding.email.text.toString(),
+                            dateOfBirth = binding.dateOfBirth.text.toString(),
+                            salary = binding.salaryExpectations.text.toString(),
+                            pictureURI = stringImageUri,
+                            notes = binding.notes.text.toString(),
+                            isFavorite = false
+                        )
+                    )
+                } else {
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.fieds_must_be_completed),
+                        Snackbar.LENGTH_SHORT
+                    )
+                }
+            }
+            (activity as? MainActivity)?.replaceFragment(MainFragment())
+        }
+    }
+
+    private fun fillFieldsWhenEdit() {
+        candidate?.let { candidate ->
+            binding.firstName.setText(candidate.firstName)
+            binding.lastName.setText(candidate.lastName)
+            binding.phoneNumber.setText(candidate.phoneNumber)
+            binding.email.setText(candidate.email)
+            binding.dateOfBirth.setText(candidate.dateOfBirth)
+            binding.salaryExpectations.setText(candidate.salary)
+            binding.notes.setText(candidate.notes)
+            if (candidate.pictureURI != "") {
+                imageCandidateImageView.setImageURI(Uri.parse(candidate.pictureURI))
+            }
+        }
+    }
+
+    //checking if the SDK is >= 33 to adapt the permission function
+    private fun initImageClickHandler(){
         imageCandidateImageView.setOnClickListener {
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
@@ -183,77 +231,16 @@ class AddCandidateFragment : Fragment() {
                 }
             }
         }
+    }
 
-        //checking if the Fragment must be pre completed or not (editing or new candidate)
-        if (candidate != null) {
-            candidate?.let { candidate ->
-                firstNameEditText.setText(candidate.firstName)
-                lastNameEditText.setText(candidate.lastName)
-                phoneNumberEditText.setText(candidate.phoneNumber)
-                emailAddressEditText.setText(candidate.email)
-                dateOfBirth.setText(candidate.dateOfBirth)
-                salaryEditText.setText(candidate.salary)
-                notesEditText.setText(candidate.notes)
-                if (candidate.pictureURI != "") {
-                    imageCandidateImageView.setImageURI(Uri.parse(candidate.pictureURI))
-                }
-            }
-        }
-
-        saveButton.setOnClickListener {
-            //checking if le database must update a candidate or create a new one (editing or new candidate)
-            var stringImageUri: String
-            if (imageUri == null) {
-                stringImageUri = ""
-            } else {
-                stringImageUri = imageUri.toString()
-            }
-            if (candidate != null && validateFields()) {
-                val updatedCandidate = candidate?.copy(
-                    firstName = firstNameEditText.text.toString(),
-                    lastName = lastNameEditText.text.toString(),
-                    phoneNumber = phoneNumberEditText.text.toString(),
-                    email = emailAddressEditText.text.toString(),
-                    dateOfBirth = dateOfBirth.text.toString(),
-                    salary = salaryEditText.text.toString(),
-                    notes = notesEditText.text.toString(),
-                    pictureURI = stringImageUri
-                )
-                updatedCandidate?.let {
-                    viewModel.updateCandidate(it)
-                }
-            } else {
-                if (validateFields()) {
-                    viewModel.insertCandidate(
-                        candidate = Candidate(
-                            firstName = binding.firstName.text.toString(),
-                            lastName = binding.lastName.text.toString(),
-                            phoneNumber = binding.phoneNumber.text.toString(),
-                            email = binding.email.text.toString(),
-                            dateOfBirth = dateOfBirth.text.toString(),
-                            salary = salaryEditText.text.toString(),
-                            pictureURI = stringImageUri,
-                            notes = notesEditText.text.toString(),
-                            isFavorite = false
-                        )
-                    )
-                } else {
-                    Snackbar.make(
-                        binding.root,
-                        getString(R.string.fieds_must_be_completed),
-                        Snackbar.LENGTH_SHORT
-                    )
-                }
-            }
-            (activity as? MainActivity)?.replaceFragment(MainFragment())
-        }
-        dateOfBirth.setOnClickListener {
-            showDatePickerDialog(dateOfBirth)
-        }
-        binding.arrowIcon.setOnClickListener {
-            (activity as? MainActivity)?.replaceFragment(MainFragment())
-        }
-
+    private fun initTextWatchers() {
+        addTextWatcher(binding.firstNameLayout, binding.firstName, false)
+        addTextWatcher(binding.lastNameLayout, binding.lastName, false)
+        addTextWatcher(binding.phoneNumberLayout, binding.phoneNumber, false)
+        addTextWatcher(binding.emailLayout, binding.email, true)
+        addTextWatcher(binding.dateOfBirthLayout, binding.dateOfBirth, false)
+        addTextWatcher(binding.salaryExpectationsLayout, binding.salaryExpectations, false)
+        addTextWatcher(binding.notesLayout, binding.notes, false)
     }
 
     // open the photo gallery
