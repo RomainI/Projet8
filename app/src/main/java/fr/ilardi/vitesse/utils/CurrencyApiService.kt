@@ -21,7 +21,7 @@ object RetrofitInstance {
     private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) 
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 

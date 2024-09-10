@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.ilardi.vitesse.data.repository.CandidateRepository
 import fr.ilardi.vitesse.model.Candidate
+import fr.ilardi.vitesse.utils.CurrencyApiService
 import fr.ilardi.vitesse.utils.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsFragmentViewModel  @Inject constructor(
-    private val repository: CandidateRepository
+    private val repository: CandidateRepository,
+    private val apiService: CurrencyApiService = RetrofitInstance.api
 ) : ViewModel() {
 
     fun updateCandidate(candidate: Candidate) {
@@ -28,16 +30,11 @@ class DetailsFragmentViewModel  @Inject constructor(
             repository.delete(candidate)
         }
     }
-    fun insertCandidate(candidate: Candidate) {
-        viewModelScope.launch {
-            repository.insert(candidate)
-        }
-    }
 
     suspend fun getGbpFromEur(euro : Double): Double? {
         return try {
             val response = withContext(Dispatchers.IO) {
-                RetrofitInstance.api.getEuroRates()
+                apiService.getEuroRates()
             }
             response.eur.gbp * euro
         } catch (e: Exception) {
